@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="MediaPlayer.EditMediaInfoUserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:MediaPlayer"
+             mc:Ignorable="d" 
+             d:DesignHeight="230" d:DesignWidth="400">
+    <Grid>
+        <StackPanel VerticalAlignment="Center">
+            <StackPanel.Resources>
+                <Style TargetType="Label">
+                    <Setter Property="FontSize" Value="18"></Setter>
+                    <Setter Property="Margin" Value="0,0,20,0"></Setter>
+                </Style>
+                <Style TargetType="TextBox">
+                    <Setter Property="FontSize" Value="18"></Setter>
+                    <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                </Style>
+            </StackPanel.Resources>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Title: " Grid.Column="0"></Label>
+                <TextBox x:Name="titleBox" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Artist: " Grid.Column="0"></Label>
+                <TextBox x:Name="artistbox" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+            </Grid>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Album: " Grid.Column="0"></Label>
+                <TextBox x:Name="albumBox" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+            </Grid>
+            
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label Content="Year: " Grid.Column="0"></Label>
+                <TextBox x:Name="yearBox" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+            </Grid>
+
+            <Button x:Name="saveBtn" 
+                    Content="Save" 
+                    Width="100" 
+                    Margin="20" 
+                    FontSize="14" 
+                    Background="Transparent"
+                    Click="SaveButton_Click"></Button>
+        </StackPanel>  
+    </Grid>
+</UserControl>
