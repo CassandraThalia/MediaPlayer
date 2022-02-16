@@ -14,7 +14,7 @@
                     <Setter Property="Margin" Value="0,0,20,0"></Setter>
                 </Style>
                 <Style TargetType="TextBox">
-                    <Setter Property="FontSize" Value="18"></Setter>
+                    <Setter Property="FontSize" Value="14"></Setter>
                     <Setter Property="VerticalAlignment" Value="Center"></Setter>
                 </Style>
             </StackPanel.Resources>

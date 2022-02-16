@@ -26,12 +26,14 @@ namespace MediaPlayer
         private TagLib.File currentFile;
         private bool mediaPlayerIsPlaying = false;
         private bool userIsDraggingSlider = false;
+        private string fileName;
 
         public MainWindow()
         {
             InitializeComponent();
         }
 
+        //Create timer for progress bar (only starts once media is loaded) -- see source below
         private void InitializeTimer()
         {
             DispatcherTimer timer = new DispatcherTimer();
@@ -40,6 +42,7 @@ namespace MediaPlayer
             timer.Start();
         }
 
+        //Timer tick event -- see source below
         private void Timer_Tick(object sender, EventArgs e)
         {
             if ((mediaPlayer.Source != null) && (mediaPlayer.NaturalDuration.HasTimeSpan) && (!userIsDraggingSlider))
@@ -49,18 +52,32 @@ namespace MediaPlayer
                 progressBar.Value = mediaPlayer.Position.TotalSeconds;
             }
         }
+
+        private void Open_File() {
+        
+        }
+
+        //Open file event
         private void Open_Click(object sender, RoutedEventArgs e)
         {
+            //New Open File Dialog
             OpenFileDialog fd = new OpenFileDialog();
+            //Filter only .mp3 files
             fd.Filter = "MP3 files (*.mp3)|*.mp3|All files (*.*)|*.*";
+            //If Open File Dialog is successful...
             if(fd.ShowDialog() == true)
             {
+                //If file extension is correct...
                 if (System.IO.Path.GetExtension(fd.FileName) == ".mp3")
                 {
+                    fileName = fd.FileName;
+                    //Insert file info to TagLib var
                     currentFile = TagLib.File.Create(fd.FileName);
                     buildSongInfo();
                     fillUserForm();
+                    //Initialize media player with chosen file
                     mediaPlayer.Source = new Uri(fd.FileName);
+                    //If there is art to display, set cover image art -- see source below
                     if (currentFile.Tag.Pictures.Length >= 1)
                     {
                         TagLib.IPicture pic = currentFile.Tag.Pictures[0];
@@ -72,75 +89,87 @@ namespace MediaPlayer
                         b.EndInit();
                         coverImg.Source = b;
                     }
+                    //If there is no art to display, show placeholder art
                     else if (currentFile.Tag.Pictures.Length == 0)
                     {
                         coverImg.Source = new BitmapImage(new Uri(@"images\cover.jpg", UriKind.Relative));
                     }
                 }
+                //If file extension is incorrect, display message box
                 else
                 {
                     MessageBox.Show("Incompatible file type, please select an .mp3 file");
                 }
             }
+            //Create timer, tick event will use media player 
             InitializeTimer();
         }
+
+        //If Edit button is clicked, stop media (or will cause save error) and show Edit Media Info User Control
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
+            mediaPlayer.Stop();
             songInfoBox.Visibility = Visibility.Collapsed;
-            coverImg.Visibility = Visibility.Collapsed;
             editUserConotrol.Visibility = Visibility.Visible;
         }
+
+        //If Player button is clicked, show album art and info
         private void Player_Click(object sender, RoutedEventArgs e)
         {
             buildSongInfo();
             songInfoBox.Visibility = Visibility.Visible;
-            coverImg.Visibility = Visibility.Visible;
             editUserConotrol.Visibility = Visibility.Collapsed;
         }
 
+        //Function with if/else tree to build Song Info message (will insert "Unknown X" for null fields)
         private void buildSongInfo()
         {
-            string msg = "";
-            if (currentFile.Tag.Title != null)
+            if (currentFile != null)
             {
-                msg += currentFile.Tag.Title + "\n";
+                string msg = "";
+                if (currentFile.Tag.Title != null)
+                {
+                    msg += currentFile.Tag.Title + "\n";
+                }
+                else if (currentFile.Tag.Title == null)
+                {
+                    msg += "Unknown Title \n";
+                }
+                if (currentFile.Tag.AlbumArtists.Length != 0)
+                {
+                    msg += currentFile.Tag.AlbumArtists[0] + "\n";
+                }
+                else if (currentFile.Tag.AlbumArtists.Length == 0)
+                {
+                    msg += "Unknown Artist \n";
+                }
+                if (currentFile.Tag.Album != null)
+                {
+                    msg += currentFile.Tag.Album + "\n";
+                }
+                else if (currentFile.Tag.Album == null)
+                {
+                    msg += "Unknown Album \n";
+                }
+                if (currentFile.Tag.Year != 0)
+                {
+                    msg += currentFile.Tag.Year.ToString();
+                }
+                else if (currentFile.Tag.Year == 0)
+                {
+                    msg += "Unknown Year";
+                }
+                songInfoBox.Text = msg;
             }
-            else if (currentFile.Tag.Title == null)
-            {
-                msg += "Unknown Title \n";
-            }
-            if (currentFile.Tag.AlbumArtists.Length != 0)
-            {
-                msg += currentFile.Tag.AlbumArtists[0] + "\n";
-            }
-            else if (currentFile.Tag.AlbumArtists.Length == 0)
-            {
-                msg += "Unknown Artist \n";
-            }
-            if (currentFile.Tag.Album != null)
-            {
-                msg += currentFile.Tag.Album + "\n";
-            }
-            else if (currentFile.Tag.Album == null)
-            {
-                msg += "Unknown Album \n";
-            }
-            if (currentFile.Tag.Year != 0)
-            {
-                msg += currentFile.Tag.Year.ToString();
-            }
-            else if (currentFile.Tag.Year == 0)
-            {
-                msg += "Unknown Year";
-            }
-            songInfoBox.Text = msg;
         }
 
+        //Funtion to retrieve info from current TagLib file to pre-fill Media Info User Control
         private void fillUserForm()
         {
             if (currentFile != null)
             {
                 editUserConotrol.titleBox.Text = currentFile.Tag.Title;
+                //If no artists, must insert empty string or will cause error
                 if (currentFile.Tag.AlbumArtists.Length > 0)
                 {
                     editUserConotrol.artistbox.Text = currentFile.Tag.AlbumArtists[0];
@@ -150,6 +179,7 @@ namespace MediaPlayer
                     editUserConotrol.artistbox.Text = "";
                 }
                 editUserConotrol.albumBox.Text = currentFile.Tag.Album;
+                //If no year, must insert empty string or will default to 0
                 if (currentFile.Tag.Year == 0)
                 {
                     editUserConotrol.yearBox.Text = "";
@@ -161,14 +191,25 @@ namespace MediaPlayer
             }
         }
 
+        //Funcion to save info from Media Info User Control to current TagLib file 
         private void SaveMediaInfoClick(object sender, RoutedEventArgs e)
         {
-            currentFile.Tag.Title = editUserConotrol.titleBox.Text;
-            currentFile.Tag.AlbumArtists = new string[] { editUserConotrol.artistbox.Text };
-            currentFile.Tag.Album = editUserConotrol.albumBox.Text;
-            currentFile.Tag.Year = Convert.ToUInt32(editUserConotrol.yearBox.Text);
-            currentFile.Save();
-            MessageBox.Show("Saved!");
+            //Must first set media element source to null, or will cause an error if media has begun playing
+            mediaPlayer.Source = null;
+            try
+            {
+                currentFile.Tag.Title = editUserConotrol.titleBox.Text;
+                currentFile.Tag.AlbumArtists = new string[] { editUserConotrol.artistbox.Text };
+                currentFile.Tag.Album = editUserConotrol.albumBox.Text;
+                currentFile.Tag.Year = Convert.ToUInt32(editUserConotrol.yearBox.Text);
+                currentFile.Save();
+                MessageBox.Show("Saved!");
+            } 
+            catch {
+                MessageBox.Show("Save Error");
+            }
+            //Reassign correct file to media element
+            mediaPlayer.Source = new Uri(fileName);
         }
 
         private void PlayCommandBinding_CanExecute(object sender, CanExecuteRoutedEventArgs e)
@@ -223,8 +264,8 @@ namespace MediaPlayer
 
 
 //References:
-//https://dontpaniclabs.com/blog/post/2014/10/30/rounded-corners-with-transparent-backgrounds-in-wpf/
 //https://www.homeandlearn.co.uk/extras/speech/speech-open-file-button.html
 //https://stackoverflow.com/questions/61158159/handling-a-button-click-inside-a-user-control-from-the-main-window
 //https://www.wpf-tutorial.com/audio-video/how-to-creating-a-complete-audio-video-player/
 //https://stackoverflow.com/questions/17904184/using-taglib-to-display-the-cover-art-in-a-image-box-in-wpf
+//https://stackoverflow.com/questions/19294258/forcing-mediaelement-to-release-stream-after-playback
