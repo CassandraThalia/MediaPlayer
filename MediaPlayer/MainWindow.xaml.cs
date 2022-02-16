@@ -256,6 +256,14 @@ namespace MediaPlayer
         {
             progressTimer.Text = TimeSpan.FromSeconds(progressBar.Value).ToString(@"hh\:mm\:ss");
         }
+
+        private void Exit_Click(object sender, RoutedEventArgs e)
+        {
+            if (MessageBox.Show("Exit program? No Changes will be saved", "Exit", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes)
+            {
+                System.Windows.Application.Current.Shutdown();
+            }
+        }
     }
 }
 
