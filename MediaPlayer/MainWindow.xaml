@@ -6,7 +6,8 @@
         xmlns:local="clr-namespace:MediaPlayer"
         mc:Ignorable="d"
         Title="MainWindow" Height="650" Width="850" 
-            WindowStartupLocation="CenterScreen" Background="LavenderBlush">
+            WindowStartupLocation="CenterScreen">
+    
     <Window.CommandBindings>
         <CommandBinding Command="MediaCommands.Play"
                         CanExecute="PlayCommandBinding_CanExecute"
@@ -21,8 +22,13 @@
                         Executed="StopCommandBinding_Executed">
         </CommandBinding>
     </Window.CommandBindings>
+    
     <Grid>
-
+        
+        <Grid.Background>
+            <ImageBrush ImageSource="images/bg.png"/>
+        </Grid.Background>
+        
         <Menu Height="30" VerticalAlignment="Top" Background="Transparent" FontSize="12">
             <MenuItem Header="File" Margin="5,5,0,0">
                 <MenuItem Header="Open" Click="Open_Click">
@@ -57,24 +63,25 @@
             </Button>
         </DockPanel>
 
-        <StackPanel VerticalAlignment="Center" Margin="105,0,0,0" >
+        <StackPanel VerticalAlignment="Center" Margin="105,0,0,0">
+            <TextBlock x:Name="songTitle" Width="500" FontSize="20" TextAlignment="Center" Margin="0,0,0,30"></TextBlock>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Image x:Name="coverImg" Height="250" Width="250" Source="images\cover.jpg"></Image>
                 <local:EditMediaInfoUserControl x:Name="editUserConotrol" Visibility='Collapsed' Width="300" Height="300" Margin="20,0,0,0"
                                             OnSaveClickEvent="SaveMediaInfoClick"/>
             </StackPanel>
             <MediaElement x:Name="mediaPlayer" Height="0" Width="0" LoadedBehavior="Manual" UnloadedBehavior="Manual" ></MediaElement>
-            <TextBlock Width="500" x:Name="songInfoBox" FontSize="16" LineHeight="3" Margin="0,10,0,10" TextAlignment="Center"></TextBlock>
+            <TextBlock TextWrapping="WrapWithOverflow" Width="500" x:Name="songInfoBox" FontSize="14" LineHeight="3" Padding="0,10,0,40" TextAlignment="Center"></TextBlock>
+        </StackPanel>
 
 
-
-            <StackPanel VerticalAlignment="Bottom" Margin="0,20,0,0">
+        <StackPanel VerticalAlignment="Bottom" Margin="105,0,0,20">
                 <StackPanel VerticalAlignment="Bottom" Orientation="Horizontal" HorizontalAlignment="Center">
                     <StackPanel.Resources>
                         <Style TargetType="Button">
-                            <Setter Property="Height" Value="40"></Setter>
-                            <Setter Property="Width" Value="40"></Setter>
-                            <Setter Property="Margin" Value="30, 0, 30, 0"></Setter>
+                            <Setter Property="Height" Value="30"></Setter>
+                            <Setter Property="Width" Value="30"></Setter>
+                            <Setter Property="Margin" Value="50, 0, 50, 0"></Setter>
                             <Setter Property="Background" Value="Transparent"></Setter>
                             <Setter Property="BorderThickness" Value="0"></Setter>
                         </Style>
@@ -105,7 +112,7 @@
                     </StatusBarItem>
                 </StatusBar>
             </StackPanel>
-        </StackPanel>
+        
     </Grid>
 </Window>
 

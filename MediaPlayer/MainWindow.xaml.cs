@@ -53,10 +53,6 @@ namespace MediaPlayer
             }
         }
 
-        private void Open_File() {
-        
-        }
-
         //Open file event
         private void Open_Click(object sender, RoutedEventArgs e)
         {
@@ -94,6 +90,7 @@ namespace MediaPlayer
                     {
                         coverImg.Source = new BitmapImage(new Uri(@"images\cover.jpg", UriKind.Relative));
                     }
+                    songTitle.Text = System.IO.Path.GetFileNameWithoutExtension(fileName);
                 }
                 //If file extension is incorrect, display message box
                 else
@@ -108,7 +105,6 @@ namespace MediaPlayer
         //If Edit button is clicked, stop media (or will cause save error) and show Edit Media Info User Control
         private void Edit_Click(object sender, RoutedEventArgs e)
         {
-            mediaPlayer.Stop();
             songInfoBox.Visibility = Visibility.Collapsed;
             editUserConotrol.Visibility = Visibility.Visible;
         }
@@ -194,7 +190,8 @@ namespace MediaPlayer
         //Funcion to save info from Media Info User Control to current TagLib file 
         private void SaveMediaInfoClick(object sender, RoutedEventArgs e)
         {
-            //Must first set media element source to null, or will cause an error if media has begun playing
+            //Must first stop media element and set source to null, or will cause an error if media has begun playing
+            mediaPlayer.Stop();
             mediaPlayer.Source = null;
             try
             {
@@ -269,3 +266,4 @@ namespace MediaPlayer
 //https://www.wpf-tutorial.com/audio-video/how-to-creating-a-complete-audio-video-player/
 //https://stackoverflow.com/questions/17904184/using-taglib-to-display-the-cover-art-in-a-image-box-in-wpf
 //https://stackoverflow.com/questions/19294258/forcing-mediaelement-to-release-stream-after-playback
+//https://stackoverflow.com/questions/3100837/set-background-image-on-grid-in-wpf-using-c-sharp

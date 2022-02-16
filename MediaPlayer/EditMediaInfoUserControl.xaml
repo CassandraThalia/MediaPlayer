@@ -62,10 +62,18 @@
             <Button x:Name="saveBtn" 
                     Content="Save" 
                     Width="100" 
-                    Margin="20" 
+                    Margin="0,20,0,0" 
                     FontSize="14" 
-                    Background="Transparent"
-                    Click="SaveButton_Click"></Button>
+                    Background="White"
+                    Click="SaveButton_Click"
+                    Padding="5">
+            </Button>
+            <Label Content="Warning! Saving will stop playback." 
+                   FontSize="10" 
+                   HorizontalAlignment="Center" 
+                   Foreground="Crimson"
+                   Margin="6,0,0,0">
+            </Label>
         </StackPanel>  
     </Grid>
 </UserControl>
